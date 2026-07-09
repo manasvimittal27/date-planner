@@ -1,0 +1,24 @@
+# render.yaml — defines both services so Render can deploy them together
+# from one GitHub repo, instead of configuring each manually in the dashboard.
+#
+# This is "Infrastructure as Code" — the deployment config lives in your repo,
+# versioned alongside your app, rather than living only as clicks in a web UI.
+
+services:
+  - type: web
+    name: date-planner-api
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn api:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: FOURSQUARE_API_KEY
+        sync: false   # sync: false means "set this manually in Render's dashboard, don't store it in this file"
+      - key: GEMINI_API_KEY
+        sync: false
+
+  - type: web
+    name: date-planner-frontend
+    runtime: static
+    buildCommand: ""
+    staticPublishPath: ./frontend
